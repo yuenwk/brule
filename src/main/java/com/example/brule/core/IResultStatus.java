@@ -1,6 +1,6 @@
 package com.example.brule.core;
 
-public interface IResult {
+public interface IResultStatus {
 
 	long getCode();
 

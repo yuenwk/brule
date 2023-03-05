@@ -8,8 +8,11 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -18,10 +21,13 @@ import static jakarta.persistence.FetchType.LAZY;
 @Entity
 @Getter
 @Setter
-public class SysUser extends EntityBase {
+public class SysUser extends EntityBase implements UserDetails {
 
 	@Column(nullable = false, unique = true, length = 30)
 	private String username;
+
+	@Column
+	private String password;
 
 	@Column(nullable = false, length = 50)
 	private String fullName;
@@ -46,6 +52,35 @@ public class SysUser extends EntityBase {
 			inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
 	private Set<SysRole> roles = new LinkedHashSet<>();
 
+
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return null;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return this.state != State.LOCKED;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return this.state != State.LOCKED;
+	}
+
+
+
 	public enum Gender {
 
 		MALE, FEMALE
@@ -56,10 +91,6 @@ public class SysUser extends EntityBase {
 
 		NORMAL, LOCKED
 
-	}
-
-	public boolean isLocked() {
-		return this.state == State.LOCKED;
 	}
 
 }

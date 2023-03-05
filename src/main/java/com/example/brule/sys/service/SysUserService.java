@@ -19,10 +19,7 @@ public class SysUserService {
 	public List<UserVO> list() {
 		List<SysUser> all = userRepository.findAll();
 
-		return all.stream()
-			.map(u -> new UserVO(u.getId(), u.getUsername(), u.getFullName(), u.getAvatar(), u.getGender(),
-					u.getState(), u.getCreatedTime()))
-			.toList();
+		return all.stream().map(UserVO::new).toList();
 	}
 
 }
