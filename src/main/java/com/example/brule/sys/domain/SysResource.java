@@ -11,12 +11,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Getter
 @Setter
+@Accessors(chain = true)
 @Entity
 public class SysResource extends EntityBase {
 
@@ -51,7 +53,7 @@ public class SysResource extends EntityBase {
 
 	public enum Type {
 
-		MENU, BUTTON, API
+		MENU, BUTTON
 
 	}
 

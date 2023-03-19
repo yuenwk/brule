@@ -1,16 +1,19 @@
 package com.example.brule.sys.controller;
 
-import com.example.brule.core.AppException;
-import com.example.brule.core.CommonResultStatus;
+import com.example.brule.core.protocol.AppException;
+import com.example.brule.core.protocol.CommonResult;
+import com.example.brule.core.protocol.CommonResultStatus;
 import com.example.brule.sys.domain.SysUser;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
+import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,54 +21,53 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RestController
 public class LoginController {
 
-	UserDetailsService userDetailsService;
+//    @Value("${auth.cache_prefix:login_token:}")
+//    private String cachePrefix;
 
-	@PostMapping("/login")
-	public ResponseEntity<CurrentUser> login(@Valid @RequestBody LoginRequest param, HttpServletRequest request) {
-		try {
-			request.login(param.username, param.password);
-		}
-		catch (ServletException e) {
-			throw new AppException(CommonResultStatus.BUSINESS_FAILED.getCode(), e.getMessage());
-		}
+    final UserDetailsService userDetailsService;
 
-		var auth = (Authentication) request.getUserPrincipal();
-		var user = (SysUser) auth.getPrincipal();
+//    RememberMeServices rememberMeServices;
 
-		return ResponseEntity.ok(new CurrentUser(user.getId(), user.getUsername()));
-	}
+    @PostMapping("/login")
+    public CommonResult<Map<String, Object>> login(@Valid @RequestBody LoginRequest param, HttpServletRequest request,
+        HttpServletResponse response) {
+        try {
+            request.login(param.username, param.password);
+        } catch (ServletException e) {
+            throw new AppException(CommonResultStatus.BUSINESS_FAILED.getCode(), e.getMessage());
+        }
 
-	@PostMapping("/logout")
-	public LogoutResponse logout(HttpServletRequest request) throws ServletException {
-		request.logout();
-		return new LogoutResponse();
-	}
+        var auth = (Authentication) request.getUserPrincipal();
+        var user = (SysUser) auth.getPrincipal();
 
-	// @GetMapping("/current-user")
-	// public CurrentUser getCurrentUser(@AuthenticationPrincipal SysUser user) {
-	// return new CurrentUser(user.getId(), user.getUsername());
-	// }
+        // rememberMeServices.loginSuccess(request, response, auth);
 
-	@GetMapping("/csrf")
-	public CsrfResponse csrf(HttpServletRequest request) {
-		var csrf = (CsrfToken) request.getAttribute("_csrf");
-		return new CsrfResponse(csrf.getToken());
-	}
+        return CommonResult.ok(Map.of("id", user.getId(), "fullName", user.getFullName()));
+    }
 
-	record LoginRequest(@NotBlank String username, @NotBlank @Length(min = 6) String password) {
-	}
+    @PostMapping("/logout")
+    public CommonResult<Void> logout(HttpServletRequest request) throws ServletException {
+        request.logout();
+        return CommonResult.ok();
+    }
 
-	record CurrentUser(Long id, String username) {
-	}
+    @GetMapping("/current-user")
+    public CommonResult<Map<String, Object>> getCurrentUser(@AuthenticationPrincipal SysUser user) {
+        return CommonResult.ok(Map.of("id", user.getId(), "fullName", user.getFullName()));
+    }
 
-	public record LogoutResponse() {
-	}
+    @GetMapping("/csrf")
+    public CommonResult<String> csrf(HttpServletRequest request) {
+        var csrf = (CsrfToken) request.getAttribute("_csrf");
+        return CommonResult.ok(csrf.getToken());
+    }
 
-	public record CsrfResponse(String token) {
-	}
+    record LoginRequest(@NotBlank String username, @NotBlank @Length(min = 6) String password) {
+
+    }
 
 }

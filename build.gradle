@@ -1,18 +1,8 @@
-import io.spring.javaformat.gradle.tasks.CheckFormat
-
-buildscript {
-    dependencies {
-        classpath("io.spring.javaformat:spring-javaformat-gradle-plugin:0.0.38")
-    }
-}
-
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.0.3'
     id 'io.spring.dependency-management' version '1.1.0'
 }
-
-apply plugin: 'io.spring.javaformat'
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
@@ -37,6 +27,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.session:spring-session-data-redis'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
@@ -45,8 +37,4 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
-}
-
-tasks.withType(CheckFormat).configureEach {
-    exclude "**/*Enum"
 }

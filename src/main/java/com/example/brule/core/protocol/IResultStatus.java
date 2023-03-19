@@ -1,4 +1,4 @@
-package com.example.brule.core;
+package com.example.brule.core.protocol;
 
 public interface IResultStatus {
 

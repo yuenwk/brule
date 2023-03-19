@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SysRoleRepository extends JpaRepository<SysRole, Long> {
 
-    @Query("select distinct u FROM SysUser u join u.roles r where r.id=:roleId")
-    Page<SysUser> findRoleUsers(Long roleId, Pageable pageable);
+	@Query("select distinct u FROM SysUser u join u.roles r where r.id=:roleId")
+	Page<SysUser> findRoleUsers(Long roleId, Pageable pageable);
 
 }

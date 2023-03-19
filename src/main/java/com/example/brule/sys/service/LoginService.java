@@ -1,7 +1,7 @@
 package com.example.brule.sys.service;
 
-import com.example.brule.core.AppException;
-import com.example.brule.core.CommonResultStatus;
+import com.example.brule.core.protocol.AppException;
+import com.example.brule.core.protocol.CommonResultStatus;
 import com.example.brule.sys.domain.SysUser;
 import com.example.brule.sys.repository.SysUserRepository;
 import org.springframework.security.core.userdetails.UserDetails;

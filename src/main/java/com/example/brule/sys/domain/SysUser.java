@@ -1,96 +1,100 @@
 package com.example.brule.sys.domain;
 
+import static jakarta.persistence.FetchType.LAZY;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import static jakarta.persistence.FetchType.LAZY;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Getter
 @Setter
+@Accessors(chain = true)
 public class SysUser extends EntityBase implements UserDetails {
 
-	@Column(nullable = false, unique = true, length = 30)
-	private String username;
+    @Column(nullable = false, unique = true, length = 30)
+    private String username;
 
-	@Column
-	private String password;
+    @Column
+    @JsonIgnore
+    private String password;
 
-	@Column(nullable = false, length = 50)
-	private String fullName;
+    @Column(nullable = false, length = 50)
+    private String fullName;
 
-	@Column(length = 1024)
-	private String avatar;
+    @Column(length = 1024)
+    private String avatar;
 
-	@Column(nullable = false)
-	private Gender gender;
+    @Column(nullable = false)
+    private Gender gender;
 
-	@Column(nullable = false)
-	private State state;
+    @Column(nullable = false)
+    private State state;
 
-	@Column
-	private LocalDateTime updatedTime;
+    @Column
+    private LocalDateTime updatedTime;
 
-	@Column
-	private LocalDateTime createdTime;
+    @Column
+    private LocalDateTime createdTime;
 
-	@ManyToMany(fetch = LAZY, cascade = CascadeType.DETACH)
-	@JoinTable(name = "sys_user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-			inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
-	private Set<SysRole> roles = new LinkedHashSet<>();
+    @ManyToMany(fetch = LAZY, cascade = CascadeType.DETACH)
+    @JoinTable(name = "sys_user_role", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Set<SysRole> roles = new LinkedHashSet<>();
 
+    @JsonIgnore
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
 
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
-	}
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.state != State.LOCKED;
+    }
 
-	@Override
-	public boolean isAccountNonExpired() {
-		return true;
-	}
+    @JsonIgnore
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
-	@Override
-	public boolean isAccountNonLocked() {
-		return this.state != State.LOCKED;
-	}
+    @JsonIgnore
+    @Override
+    public boolean isEnabled() {
+        return this.state != State.LOCKED;
+    }
 
-	@Override
-	public boolean isCredentialsNonExpired() {
-		return true;
-	}
+    public enum Gender {
 
-	@Override
-	public boolean isEnabled() {
-		return this.state != State.LOCKED;
-	}
+        MALE, FEMALE
 
+    }
 
+    public enum State {
 
-	public enum Gender {
+        NORMAL, LOCKED
 
-		MALE, FEMALE
-
-	}
-
-	public enum State {
-
-		NORMAL, LOCKED
-
-	}
+    }
 
 }

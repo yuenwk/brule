@@ -1,4 +1,4 @@
-package com.example.brule.core;
+package com.example.brule.core.configuration;
 
 import com.example.brule.sys.domain.EntityBase;
 import com.fasterxml.jackson.core.JsonGenerator;

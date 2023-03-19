@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BruleApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BruleApplication.class, args);
+		var run = SpringApplication.run(BruleApplication.class, args);
 	}
 
 }

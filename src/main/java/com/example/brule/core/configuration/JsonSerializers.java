@@ -1,4 +1,4 @@
-package com.example.brule.core;
+package com.example.brule.core.configuration;
 
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
